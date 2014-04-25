@@ -30,14 +30,14 @@ class Token(unicode):
                     typograph.ti -= 1
                 break
 
-    def replace(self, token):
+    def replace(self, token, morphed=True):
         assert isinstance(token, Token)
         # we can't use remove because as string comparison two
         # different tokens with equal content are equal
         tokens = self.owner.tokens
         for i, el in enumerate(tokens):
             if el is self:
-                token.morphed = True
+                token.morphed = morphed
                 tokens[i] = token
                 return token
 
@@ -60,6 +60,14 @@ class SpaceToken(Token):
             content = u'\u00a0'
         content = content[:1]
         return Token.__new__(cls, content, owner)
+
+    def morph(self, prev, next):
+        while isinstance(next[0], SpaceToken):
+            if isinstance(next[0], NbspToken):
+                self, _ = next.pop(0), self.drop()
+            else:
+                next.pop(0).drop()
+
 
     def __repr__(self):
         return b'{}({})'.format(self.__class__.__name__, unicode.__repr__(self))
@@ -195,26 +203,26 @@ class Typograph(object):
 
     @classmethod
     def typograph_tree(cls, tree, strings=None):
-        strings = strings or cls()
+        if strings is None:
+            strings = cls()
         if tree.text:
             strings.new_text_node(tree)
         for child in tree.iterchildren():
             if child.tag in ['p', 'blockquote', 'div']:
                 # block element, flush context
                 strings.morph()
-                cls.typograph_tree(child)
+                cls.typograph_tree(child).morph()
                 strings = cls()
             else:
                 cls.typograph_tree(child, strings)
             if child.tail:
                 strings.new_tail_node(child)
-        strings.morph()
+        return strings
 
     @classmethod
     def typograph_html(cls, markup):
-        #markup = markup.encode('utf-8')
         doc = html.fragment_fromstring(markup, create_parent=True)
-        cls.typograph_tree(doc)
+        cls.typograph_tree(doc).morph()
         return inner_html(doc)
 
     @classmethod

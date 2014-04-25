@@ -2,9 +2,10 @@
 from lxml import html
 
 class LazyList(object):
-    def __init__(self, constructor):
-        self.data = [ ]
+    def __init__(self, constructor, offset=0):
+        self.data = []
         self.constructor = constructor
+        self.offset = offset
         self.iterator = constructor()
 
     def __setitem__(self, index, value):
@@ -15,14 +16,20 @@ class LazyList(object):
             self.data.append(self.iterator.next())
         return self.data[index]
 
+    def reset(self):
+        # re-init generator
+        self.data = []
+        self.iterator = self.constructor()
+
     def pop(self, index):
         self[index]
         value = self.data.pop(index)
-
-        # re-init generator
-        self.data = [ ]
-        self.iterator = self.constructor()
+        self.reset()
         return value
+
+    def offset(self, offset):
+        return self.__class__(self, self.constructor, offset)
+
 
 def inner_html(tag):
     # XXX encode/decode everywhere is really HELL

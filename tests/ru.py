@@ -11,13 +11,22 @@ class RuTests(unittest.TestCase):
 
     def assertText(self, text, *args):
         value = highlight(RuTypograph.typograph_text(text))
+        if not value in args:
+            print '\n'
+            print value
+            for arg in args:
+                print arg
+            print '\n'
         self.assertIn(value, args)
 
     def assertHtml(self, text, *args):
         value = highlight(RuTypograph.typograph_html(text))
         if not value in args:
+            print '\n'
+            print value
             for arg in args:
                 print arg
+            print '\n'
         self.assertIn(value, args)
 
     # XXX cleanup tests
@@ -36,6 +45,11 @@ class RuTests(unittest.TestCase):
     def test_3(self):
         self.assertText(
             u'А в ответ ему: "Таити, Таити! Не были мы на вашем "Таити"!".',
+            u'А␣в␣ответ ему: «Таити, Таити! Не␣были мы␣на␣вашем „Таити“!».')
+
+    def test_3_1(self):
+        self.assertText(
+            u'А в ответ ему: «Таити, Таити! Не были мы на вашем «Таити»!».',
             u'А␣в␣ответ ему: «Таити, Таити! Не␣были мы␣на␣вашем „Таити“!».')
 
     def test_4(self):

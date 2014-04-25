@@ -52,7 +52,7 @@ class ParticleToken(WordToken):
         if lower in PREPOSITIONS:
             if next[0].__class__ is SpaceToken:
                 # Non-breaking space
-                next[0] = next[0].replace(NbspToken(u'\u00a0', self.owner))
+                next[0] = next[0].replace(NbspToken(u'\u00a0', self.owner), morphed=False)
                 return
 
         if lower in HYPHEN_PREPOSITIONS:
@@ -90,13 +90,13 @@ class DigitsToken(BaseDigitsToken):
                 next[0].__class__ is SpaceToken and\
                 next[1].__class__ is WordToken and \
                 self.year_re.match(next[1]):
-            next[0] = next[0].replace(NbspToken(u'\u00a0', self.owner))
+            next[0] = next[0].replace(NbspToken(u'\u00a0', self.owner), morphed=False)
 
         elif len(self) <= 2 and \
                 next[0].__class__ is SpaceToken and\
                 next[1].__class__ is WordToken and \
                 self.months_re.match(next[1]):
-            next[0] = next[0].replace(NbspToken(u'\u00a0', self.owner))
+            next[0] = next[0].replace(NbspToken(u'\u00a0', self.owner), morphed=False)
 
 
 class PunctuationToken(Token):
