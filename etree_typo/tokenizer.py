@@ -128,7 +128,7 @@ class BaseTypograph(object):
 
 
     @classmethod
-    def typograph_tree(cls, tree, lang=None, typograph=None):
+    def _typograph_tree(cls, tree, lang=None, typograph=None):
         if 'lang' in tree.attrib:
             lang = tree.attrib['lang'].split('_')[1]
         if typograph is None:
@@ -136,21 +136,26 @@ class BaseTypograph(object):
         if tree.text:
             typograph.new_text_node(tree)
         for child in tree.iterchildren():
+            # XXX full list of block tags!
             if child.tag in ['p', 'blockquote', 'div']:
                 # block element, flush context
                 typograph.morph()
-                cls.typograph_tree(child, lang).morph()
+                cls._typograph_tree(child, lang).morph()
                 typograph = cls(lang)
             else:
-                cls.typograph_tree(child, lang, typograph)
+                cls._typograph_tree(child, lang, typograph)
             if child.tail:
                 typograph.new_tail_node(child)
         return typograph
 
     @classmethod
+    def typograph_tree(cls, tree, lang=None):
+        cls._typograph_tree(tree, lang).morph()
+
+    @classmethod
     def typograph_html(cls, markup, lang=None):
         doc = html.fragment_fromstring(markup, create_parent=True)
-        cls.typograph_tree(doc, lang=lang).morph()
+        cls.typograph_tree(doc, lang)
         return inner_html(doc)
 
     @classmethod
