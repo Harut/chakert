@@ -1,0 +1,17 @@
+*.pyc
+*.pyo
+*~
+*.*.swp
+*.swo
+*.egg-info
+*.db
+*.orig
+dist
+venv
+build
+pip-log.txt
+coverage.xml
+nosetests.xml
+.DS_Store
+.coverage
+.swp
