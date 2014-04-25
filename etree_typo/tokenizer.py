@@ -1,92 +1,9 @@
 # -*- coding: utf-8 -*-
-import re
 from lxml import html
 from .util import LazyList, inner_html
 
 
-
-class Token(unicode):
-
-    morphed = False
-
-    def __new__(cls, content, owner):
-        self = unicode.__new__(cls, content)
-        self.owner = owner
-        return self
-
-    def morph(self, prev, next):
-        pass
-
-    def drop(self):
-        # we can't use remove because as string comparison two
-        # different tokens with equal content are equal
-        tokens = self.owner.tokens
-        for i, el in enumerate(tokens):
-            if el is self:
-                tokens.pop(i)
-                typograph = self.owner.typograph
-                if typograph.active_token is self:
-                    typograph.active_token = None
-                    typograph.ti -= 1
-                break
-
-    def replace(self, token, morphed=True):
-        assert isinstance(token, Token)
-        # we can't use remove because as string comparison two
-        # different tokens with equal content are equal
-        tokens = self.owner.tokens
-        for i, el in enumerate(tokens):
-            if el is self:
-                token.morphed = morphed
-                tokens[i] = token
-                return token
-
-    def __repr__(self):
-        return '{}({})'.format(self.__class__.__name__, self.encode('utf-8'))
-
-
-class WordToken(Token):
-
-    regexp = re.compile(u'[\d\w\N{ACUTE ACCENT}¹²³]+', re.UNICODE)
-
-
-class SpaceToken(Token):
-
-    regexp = re.compile(u'[ \t\r\n\u00A0]+')
-
-    def __new__(cls, content, owner):
-        if u'\u00a0' in content:
-            cls = NbspToken
-            content = u'\u00a0'
-        content = content[:1]
-        return Token.__new__(cls, content, owner)
-
-    def morph(self, prev, next):
-        while isinstance(next[0], SpaceToken):
-            if isinstance(next[0], NbspToken):
-                self, _ = next.pop(0), self.drop()
-            else:
-                next.pop(0).drop()
-
-
-    def __repr__(self):
-        return b'{}({})'.format(self.__class__.__name__, unicode.__repr__(self))
-
-
-class NbspToken(SpaceToken):
-
-    regexp = re.compile(u'[\u00A0]+')
-
-
-class DigitsToken(Token):
-
-    regexp = re.compile(u'[\d¹²³]+(?!\w)', re.UNICODE)
-
-
-class OtherToken(Token):
-    pass
-
-
+# XXX name of class is not perfect
 class TokenString(object):
 
     token_classes = NotImplemented
@@ -106,7 +23,7 @@ class TokenString(object):
                     matched = match.group()
                     break
             else:
-                matched, cls = text[0], OtherToken
+                matched, cls = text[0], self.default_token_class
             token = cls(matched, self)
             tokens.append(token)
             text = text[len(matched):]
@@ -125,27 +42,36 @@ class TokenString(object):
         return b'{}(\n    {})'.format(self.__class__.__name__, childs)
 
 
-class Typograph(object):
+class BaseTypograph(object):
 
-    TokenString = TokenString
+    # XXX name of attribute is not perfect
+    rules_by_language = {}
 
-    def __init__(self):
+    def __init__(self, lang):
+        self.lang = lang
         self.token_strings = []
         self.quote_stack = []
+        self.TokenString = self.rules_by_language.get(lang)
 
     def new_alone_node(self, text):
-        token_string = self.TokenString(self, text)
-        self.token_strings.append(token_string)
+        if self.TokenString is not None:
+            token_string = self.TokenString(self, text)
+            self.token_strings.append(token_string)
+        # else: typography rules for language are not implemented, skip
 
     def new_text_node(self, element):
-        token_string = self.TokenString(self, element.text, element,
-                                        apply_to='text')
-        self.token_strings.append(token_string)
+        if self.TokenString is not None:
+            token_string = self.TokenString(self, element.text, element,
+                                            apply_to='text')
+            self.token_strings.append(token_string)
+        # else: typography rules for language are not implemented, skip
 
     def new_tail_node(self, element):
-        token_string = self.TokenString(self, element.tail, element,
-                                       apply_to='tail')
-        self.token_strings.append(token_string)
+        if self.TokenString is not None:
+            token_string = self.TokenString(self, element.tail, element,
+                                           apply_to='tail')
+            self.token_strings.append(token_string)
+        # else: typography rules for language are not implemented, skip
 
     def morph(self):
         for token in self:
@@ -202,33 +128,35 @@ class Typograph(object):
 
 
     @classmethod
-    def typograph_tree(cls, tree, strings=None):
-        if strings is None:
-            strings = cls()
+    def typograph_tree(cls, tree, lang=None, typograph=None):
+        if 'lang' in tree.attrib:
+            lang = tree.attrib['lang'].split('_')[1]
+        if typograph is None:
+            typograph = cls(lang)
         if tree.text:
-            strings.new_text_node(tree)
+            typograph.new_text_node(tree)
         for child in tree.iterchildren():
             if child.tag in ['p', 'blockquote', 'div']:
                 # block element, flush context
-                strings.morph()
-                cls.typograph_tree(child).morph()
-                strings = cls()
+                typograph.morph()
+                cls.typograph_tree(child, lang).morph()
+                typograph = cls(lang)
             else:
-                cls.typograph_tree(child, strings)
+                cls.typograph_tree(child, lang, typograph)
             if child.tail:
-                strings.new_tail_node(child)
-        return strings
+                typograph.new_tail_node(child)
+        return typograph
 
     @classmethod
-    def typograph_html(cls, markup):
+    def typograph_html(cls, markup, lang=None):
         doc = html.fragment_fromstring(markup, create_parent=True)
-        cls.typograph_tree(doc).morph()
+        cls.typograph_tree(doc, lang=lang).morph()
         return inner_html(doc)
 
     @classmethod
-    def typograph_text(cls, text):
-        strings = cls()
-        strings.new_alone_node(text)
-        strings.morph()
-        return strings.text
+    def typograph_text(cls, text, lang=None):
+        typograph = cls(lang)
+        typograph.new_alone_node(text)
+        typograph.morph()
+        return typograph.text
 

@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 import re
-from ..tokenizer import Token, WordToken, SpaceToken, NbspToken, \
-    DigitsToken as BaseDigitsToken, TokenString, Typograph
+from ..tokens import Token, WordToken, SpaceToken, NbspToken, \
+    DigitsToken as BaseDigitsToken, OtherToken
+from ..tokenizer import TokenString
 
 
 #_ABBRS = (u'т. д|'
@@ -168,20 +169,15 @@ class DashToken(Token):
         if self in u'\N{EN DASH}\N{EM DASH}' and prev[0].__class__ is SpaceToken:
             prev[0] = prev[0].replace(NbspToken(u'\u00A0', self.owner))
 
-
 # XXX emails!
 # XXX phone numbers!
 # XXX person names
 # XXX Привязка союзов и предлогов в предыдущим словам в случае конца предложения.
 
-
 class RuTokenString(TokenString):
 
     token_classes = [SpaceToken, PunctuationToken, QuoteToken, DashToken,
                      DigitsToken, AbbrToken, ParticleToken, WordToken]
+    default_token_class = OtherToken
 
-
-class RuTypograph(Typograph):
-
-    TokenString = RuTokenString
 

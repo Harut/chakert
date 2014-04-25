@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from etree_typo.langs.ru import RuTypograph
+from etree_typo import Typograph
 import unittest
 
 def highlight(txt):
@@ -10,7 +10,7 @@ def highlight(txt):
 class RuTests(unittest.TestCase):
 
     def assertText(self, text, *args):
-        value = highlight(RuTypograph.typograph_text(text))
+        value = highlight(Typograph.typograph_text(text, 'ru'))
         if not value in args:
             print '\n'
             print value
@@ -20,7 +20,7 @@ class RuTests(unittest.TestCase):
         self.assertIn(value, args)
 
     def assertHtml(self, text, *args):
-        value = highlight(RuTypograph.typograph_html(text))
+        value = highlight(Typograph.typograph_html(text, 'ru'))
         if not value in args:
             print '\n'
             print value
