@@ -4,7 +4,7 @@ import re
 
 class Token(unicode):
 
-    morphed = False
+    __slots__ = ['owner']
 
     def __new__(cls, content, owner):
         self = unicode.__new__(cls, content)
@@ -27,14 +27,13 @@ class Token(unicode):
                     typograph.ti -= 1
                 break
 
-    def replace(self, token, morphed=True):
+    def replace(self, token):
         assert isinstance(token, Token)
         # we can't use remove because as string comparison two
         # different tokens with equal content are equal
         tokens = self.owner.tokens
         for i, el in enumerate(tokens):
             if el is self:
-                token.morphed = morphed
                 tokens[i] = token
                 return token
 
@@ -44,10 +43,14 @@ class Token(unicode):
 
 class WordToken(Token):
 
+    __slots__ = ['owner']
+
     regexp = re.compile(u'[\d\w\N{ACUTE ACCENT}¹²³]+', re.UNICODE)
 
 
 class SpaceToken(Token):
+
+    __slots__ = ['owner']
 
     regexp = re.compile(u'[ \t\r\n\u00A0]+')
 
@@ -56,7 +59,9 @@ class SpaceToken(Token):
             cls = NbspToken
             content = u'\u00a0'
         content = content[:1]
-        return Token.__new__(cls, content, owner)
+        self = unicode.__new__(cls, content)
+        self.owner = owner
+        return self
 
     def morph(self, prev, next):
         while isinstance(next[0], SpaceToken):
@@ -72,13 +77,20 @@ class SpaceToken(Token):
 
 class NbspToken(SpaceToken):
 
+    __slots__ = ['owner']
+
     regexp = re.compile(u'[\u00A0]+')
 
 
 class DigitsToken(Token):
 
+    __slots__ = ['owner']
+
     regexp = re.compile(u'[\d¹²³]+(?!\w)', re.UNICODE)
 
 
 class OtherToken(Token):
-    pass
+
+    __slots__ = ['owner']
+
+    regexp = re.compile(u'.', re.UNICODE)

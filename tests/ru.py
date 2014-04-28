@@ -32,7 +32,6 @@ class RuTests(unittest.TestCase):
     # XXX cleanup tests
 
     def test_1(self):
-
         self.assertText(
             u'Кролики -  это   не только ценный мех, но и 3-4 кг ценного мяса',
             u'Кролики␣— это не␣только ценный мех, но␣и␣3‒4 кг ценного мяса')

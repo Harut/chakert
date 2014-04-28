@@ -1,25 +1,16 @@
 # -*- coding: utf-8 -*-
 import re
-from ..tokens import Token, WordToken, SpaceToken, NbspToken, \
+from ..tokens import Token, WordToken as BaseWordToken, SpaceToken, NbspToken,\
     DigitsToken as BaseDigitsToken, OtherToken
 from ..tokenizer import TokenString
 
+import logging
+logger = logging.getLogger(__name__)
 
-#_ABBRS = (u'т. д|'
-#          u'т. п|'
-#          u'т. к|'
-#          u'т. ч|'
-#          u'т. е|'
-#          u'т. н|'
-#          u'н. э|'
-#          u'н. в|'
-#          u'и. о|'
-#          u'вр. и. о|'
-#          u'п. п|'
-#          u'(?:к|д). [а-я]. н|'
-#          u'(?:к|д). [а-я].-[а-я]. н|'
-#          u'P. S|'
-#          u'P. P. S')
+
+def _ignorecase_repl(m):
+    s = m.group()
+    return '['+s+s.upper()+']'
 
 PREPOSITIONS = frozenset(u'а|ай|в|вы|во|да|до|ее|её|ей|за|и|из|их|к|ко|мы|на'
                          u'|не|ни|но|ну|о|об|ой|он|от|по|с|со|то|ты|у|уж'
@@ -28,13 +19,27 @@ PARTICLES = frozenset(u'б|бы|ж|же|ли|ль'.split(u'|'))
 HYPHEN_PARTICLES = frozenset(u'то|либо|нибудь|ка|де|таки'.split(u'|'))
 HYPHEN_PREPOSITIONS = frozenset(u'во|в|кое|из|по'.split(u'|'))
 
-ALL_PARTICLES = u'|'.join(PREPOSITIONS | PARTICLES | HYPHEN_PARTICLES | HYPHEN_PREPOSITIONS)
+ALL_PARTICLES = (PREPOSITIONS | PARTICLES |
+                 HYPHEN_PARTICLES | HYPHEN_PREPOSITIONS)
+
+class WordToken(BaseWordToken):
+
+    __slots__ = ['owner']
+
+    def __new__(cls, content, owner):
+        if content.lower() in ALL_PARTICLES:
+            cls = ParticleToken
+        # XXX does inlining make it really faster?
+        self = unicode.__new__(cls, content)
+        self.owner = owner
+        return self
 
 
-class ParticleToken(WordToken):
+class ParticleToken(BaseWordToken):
 
-    regexp = re.compile(u'({})(?![\d\w¹²³])'.format(ALL_PARTICLES),
-                        re.UNICODE|re.IGNORECASE)
+    __slots__ = ['owner']
+
+    regexp = None
 
     def morph(self, prev, next):
         lower = self.lower()
@@ -53,7 +58,7 @@ class ParticleToken(WordToken):
         if lower in PREPOSITIONS:
             if next[0].__class__ is SpaceToken:
                 # Non-breaking space
-                next[0] = next[0].replace(NbspToken(u'\u00a0', self.owner), morphed=False)
+                next[0] = next[0].replace(NbspToken(u'\u00a0', self.owner))
                 return
 
         if lower in HYPHEN_PREPOSITIONS:
@@ -67,20 +72,26 @@ class ParticleToken(WordToken):
                 return
 
 
-class AbbrToken(WordToken):
+class AbbrToken(BaseWordToken):
+
+    __slots__ = ['owner']
 
     ABBRS_RE = u'W(?: w)+(?=\.)'.replace(u'W', u'[а-яА-Я][а-я]?')\
                                 .replace(u'w', u'[а-я]{1,2}')\
-                                .replace(u' ', u'\.(?:N{NON-BREAKING HYPHEN}|-|\s*)')
+                                .replace(u' ', u'\.(?:\N{NON-BREAKING HYPHEN}|-|\s*)')
     regexp = re.compile(ABBRS_RE, re.UNICODE)
 
     def __new__(cls, content, owner):
         content = re.sub(u'\.\s*', u'.\u00a0', content)
         content = content.replace(u'-', u'\N{NON-BREAKING HYPHEN}')
-        return WordToken.__new__(cls, content, owner)
+        self = unicode.__new__(cls, content)
+        self.owner = owner
+        return self
 
 
 class DigitsToken(BaseDigitsToken):
+
+    __slots__ = ['owner']
 
     year_re = re.compile(u'(?:г|гг|год[а-я]{,3})$')
     months_re = re.compile(u'(?:января|февраля|марта|апреля|мая|июня|июля|'
@@ -91,16 +102,18 @@ class DigitsToken(BaseDigitsToken):
                 next[0].__class__ is SpaceToken and\
                 next[1].__class__ is WordToken and \
                 self.year_re.match(next[1]):
-            next[0] = next[0].replace(NbspToken(u'\u00a0', self.owner), morphed=False)
+            next[0] = next[0].replace(NbspToken(u'\u00a0', self.owner))
 
         elif len(self) <= 2 and \
                 next[0].__class__ is SpaceToken and\
                 next[1].__class__ is WordToken and \
                 self.months_re.match(next[1]):
-            next[0] = next[0].replace(NbspToken(u'\u00a0', self.owner), morphed=False)
+            next[0] = next[0].replace(NbspToken(u'\u00a0', self.owner))
 
 
 class PunctuationToken(Token):
+
+    __slots__ = ['owner']
 
     regexp = re.compile(u'[\.,;\'?!%&№…+­@]')
 
@@ -112,6 +125,8 @@ class PunctuationToken(Token):
 
 
 class QuoteToken(Token):
+
+    __slots__ = ['owner']
 
     regexp = re.compile(u'["«»„“\N{LEFT SINGLE QUOTATION MARK}'
                         u'\N{RIGHT SINGLE QUOTATION MARK}'
@@ -143,12 +158,20 @@ class QuoteToken(Token):
         elif self in self.open_quotes:
             quote_stack.append(self)
         elif self in self.close_quotes:
-            quote_stack.pop()
+            if not quote_stack:
+                prevs_str = u''.join(reversed([prev[i]
+                                               for i in xrange(20)
+                                               if prev[i]]))
+                logger.warn(u'Unmatched closing quote after: %s', prevs_str)
+            else:
+                quote_stack.pop()
 
         # XXX not complete!
 
 
 class DashToken(Token):
+
+    __slots__ = ['owner']
 
     regexp = re.compile(u'[-\N{NON-BREAKING HYPHEN}\N{FIGURE DASH}'
                         u'\N{EN DASH}\N{EM DASH}\N{Hyphen}]') # XXX \u2043 ?
@@ -177,7 +200,6 @@ class DashToken(Token):
 class RuTokenString(TokenString):
 
     token_classes = [SpaceToken, PunctuationToken, QuoteToken, DashToken,
-                     DigitsToken, AbbrToken, ParticleToken, WordToken]
-    default_token_class = OtherToken
+                     DigitsToken, AbbrToken, WordToken, OtherToken]
 
 
