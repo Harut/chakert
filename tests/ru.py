@@ -48,6 +48,13 @@ class RuTests(BaseTests):
             u'Авторы: к.т.н. Петров, к.ф.-м.н. Иванов, д. х.  н. Васильев и т. д. и т. п.',
             u'Авторы: к.␣т.␣н. Петров, к.␣ф.␣=м.␣н. Иванов, д.␣х.␣н. Васильев и␣т.␣д. и␣т.␣п.')
 
+
+    def test_normalize_whitespaces(self):
+        self.assertHtml(
+            # XXX the second case is disputed!
+            u'Пробел\u00a0неразрывный,  два\u00a0\u00a0пробела, два\u00a0 разных',
+            u'Пробел␣неразрывный, два пробела, два разных')
+
     def test_7(self):
         self.assertHtml(
             u'<p>- Да!</p><p>- Нет!</p>',
@@ -68,3 +75,4 @@ class RuTests(BaseTests):
         self.assertHtml(
             u'<p><b>Неученье </b> <b>\u00a0</b> - тьма!</p>',
             u'<p><b>Неученье␣</b><b></b>— тьма!</p>')
+
