@@ -10,24 +10,36 @@ def highlight(txt):
 class RuTests(unittest.TestCase):
 
     def assertText(self, text, *args):
-        value = highlight(Typograph.typograph_text(text, 'ru'))
-        if not value in args:
+        value = Typograph.typograph_text(text, 'ru')
+        value_hl = highlight(value)
+        if not value_hl in args:
             print '\n'
-            print value
+            print value_hl
             for arg in args:
                 print arg
             print '\n'
-        self.assertIn(value, args)
+        self.assertIn(value_hl, args)
+
+        value2 = Typograph.typograph_html(value, 'ru')
+        if value != value2:
+            print '\n', highlight(value), '\n', highlight(value2)
+        self.assertEqual(highlight(value), highlight(value2))
 
     def assertHtml(self, text, *args):
-        value = highlight(Typograph.typograph_html(text, 'ru'))
-        if not value in args:
+        value = Typograph.typograph_html(text, 'ru')
+        value_hl = highlight(value)
+        if not value_hl in args:
             print '\n'
-            print value
+            print value_hl
             for arg in args:
                 print arg
             print '\n'
-        self.assertIn(value, args)
+        self.assertIn(value_hl, args)
+
+        value2 = Typograph.typograph_html(value, 'ru')
+        if value != value2:
+            print '\n', highlight(value), '\n', highlight(value2)
+        self.assertEqual(highlight(value), highlight(value2))
 
     # XXX cleanup tests
 

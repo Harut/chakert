@@ -50,9 +50,10 @@ class ParticleToken(BaseWordToken):
                 return
 
         if lower in HYPHEN_PARTICLES:
-           if prev[0].__class__ is DashToken and prev[0] == '-':
-                # Non-breaking hyphen
+            if prev[0].__class__ is DashToken and prev[0] == u'-':
                 prev[0] = prev[0].replace(NbspToken(u'\N{NON-BREAKING HYPHEN}', self.owner))
+                return
+            elif prev[0] == u'\N{NON-BREAKING HYPHEN}':
                 return
 
         if lower in PREPOSITIONS:
@@ -82,7 +83,7 @@ class AbbrToken(BaseWordToken):
     regexp = re.compile(ABBRS_RE, re.UNICODE)
 
     def __new__(cls, content, owner):
-        content = re.sub(u'\.\s*', u'.\u00a0', content)
+        content = re.sub(u'\.[\s\u00A0]*', u'.\u00a0', content)
         content = content.replace(u'-', u'\N{NON-BREAKING HYPHEN}')
         self = unicode.__new__(cls, content)
         self.owner = owner
