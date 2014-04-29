@@ -94,9 +94,11 @@ class DigitsToken(BaseDigitsToken):
 
     __slots__ = ['owner']
 
-    year_re = re.compile(u'(?:г|гг|год[а-я]{,3})$')
+    year_re = re.compile(u'(?:г|гг|год[а-я]{,3})$',
+                         re.IGNORECASE)
     months_re = re.compile(u'(?:января|февраля|марта|апреля|мая|июня|июля|'
-                           u'августа|сентября|ноября|декабря)$')
+                           u'августа|сентября|ноября|декабря)$',
+                           re.IGNORECASE)
 
     def morph(self, prev, next):
         if len(self) <= 4 and \
@@ -187,8 +189,8 @@ class DashToken(Token):
 
         if (self == u'-' and isinstance(prev[0], DigitsToken)
                          and isinstance(next[0], DigitsToken)):
-            # XXX how determine if self is minus or figure dash?
-            self = self.replace(DashToken(u'\N{FIGURE DASH}', self.owner))
+            # XXX how determine if self is minus or EN DASH?
+            self = self.replace(DashToken(u'\N{EN DASH}', self.owner))
 
         if self in u'\N{EN DASH}\N{EM DASH}' and prev[0].__class__ is SpaceToken:
             prev[0] = prev[0].replace(NbspToken(u'\u00A0', self.owner))
