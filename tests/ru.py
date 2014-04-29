@@ -53,13 +53,18 @@ class RuTests(BaseTests):
             u'<p>- Да!</p><p>- Нет!</p>',
             u'<p>— Да!</p><p>— Нет!</p>')
 
-    def test_8(self):
+    def test_nested_tags(self):
         self.assertHtml(
             u'<p><b>Ученье </b>- свет!</p>',
             u'<p><b>Ученье␣</b>— свет!</p>')
 
-    def test_9(self):
+    def test_normalize_whitespaces_in_tags(self):
         self.assertHtml(
             u'<p><b>Неученье </b> - тьма!</p>',
             u'<p><b>Неученье</b>␣— тьма!</p>',
             u'<p><b>Неученье␣</b>— тьма!</p>')
+
+    def test_normalize_whitespaces_in_tags2(self):
+        self.assertHtml(
+            u'<p><b>Неученье </b> <b>\u00a0</b> - тьма!</p>',
+            u'<p><b>Неученье␣</b><b></b>— тьма!</p>')

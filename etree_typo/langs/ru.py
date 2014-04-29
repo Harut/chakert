@@ -202,7 +202,7 @@ class DashToken(Token):
 
 class RuTokenString(TokenString):
 
-    token_classes = [SpaceToken, PunctuationToken, QuoteToken, DashToken,
-                     DigitsToken, AbbrToken, WordToken, OtherToken]
+    token_classes = [SpaceToken, NbspToken, PunctuationToken, QuoteToken,
+                     DashToken, DigitsToken, AbbrToken, WordToken, OtherToken]
 
 

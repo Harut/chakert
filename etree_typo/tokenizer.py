@@ -29,6 +29,7 @@ class TokenString(object):
         self.typograph = typograph
         self.element = element
         self.apply_to = apply_to
+        self.init_text = text
         self.tokens = self._tokenize(text)
 
     def _tokenize(self, text):
@@ -56,6 +57,12 @@ class TokenString(object):
         return b'{}(\n    {})'.format(self.__class__.__name__, childs)
 
 
+_space = u'[ \t\r\n\u00A0]'
+_end_space_re = re.compile(_space + u'$')
+_start_space_re = re.compile(u'^'+_space+u'+')
+_space_re = re.compile(_space + u'{2,}')
+
+
 class BaseTypograph(object):
 
     # XXX name of attribute is not perfect
@@ -68,7 +75,17 @@ class BaseTypograph(object):
         self.TokenString = self.rules_by_language.get(lang)
 
     def new_node(self, text, element=None, apply_to=None):
-        if self.TokenString is not None:
+        # normalize whitespaces
+        if self.token_strings:
+            last_string = self.token_strings[-1].text
+            if _end_space_re.search(last_string) is not None:
+                text = _start_space_re.sub(u'', text)
+        text = _space_re.sub(u' ', text)
+
+        if not text and apply_to is not None:
+            setattr(element, apply_to, text)
+
+        elif self.TokenString is not None:
             token_string = self.TokenString(self, text, element, apply_to)
             self.token_strings.append(token_string)
         # else: typography rules for language are not implemented, skip

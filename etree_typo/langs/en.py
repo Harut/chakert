@@ -187,7 +187,7 @@ class DashToken(Token):
 
 class EnTokenString(TokenString):
 
-    token_classes = [SpaceToken, PunctuationToken, QuoteToken, DashToken,
-                     DigitsToken, WordToken, OtherToken]
+    token_classes = [SpaceToken, NbspToken, PunctuationToken, QuoteToken,
+                     DashToken, DigitsToken, WordToken, OtherToken]
 
 

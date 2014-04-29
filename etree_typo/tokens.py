@@ -52,24 +52,7 @@ class SpaceToken(Token):
 
     __slots__ = ['owner']
 
-    regexp = re.compile(u'[ \t\r\n\u00A0]+')
-
-    def __new__(cls, content, owner):
-        if u'\u00a0' in content:
-            cls = NbspToken
-            content = u'\u00a0'
-        content = content[:1]
-        self = unicode.__new__(cls, content)
-        self.owner = owner
-        return self
-
-    def morph(self, prev, next):
-        while isinstance(next[0], SpaceToken):
-            if isinstance(next[0], NbspToken):
-                self, _ = next.pop(0), self.drop()
-            else:
-                next.pop(0).drop()
-
+    regexp = re.compile(u'[ \t\r\n]+')
 
     def __repr__(self):
         return b'{}({})'.format(self.__class__.__name__, unicode.__repr__(self))
