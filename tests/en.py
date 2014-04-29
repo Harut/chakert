@@ -41,3 +41,18 @@ class EnTests(BaseTests):
             u'A long time ago in a galaxy far away...',
             u'A␣long time ago in␣a␣galaxy far away…')
 
+
+    def test_minus(self):
+        self.assertText(
+            u'There is -3 °C outdoor',
+            u'There is \N{MINUS SIGN}3 °C outdoor') # XXX nbsp before degree sign?
+
+        self.assertText(
+            u'-3 °C outdoor',
+            u'\N{MINUS SIGN}3 °C outdoor') # XXX nbsp before degree sign?
+
+    def test_dialog(self):
+        self.assertText(
+            u'- Hello!',
+            u'- Hello!')
+

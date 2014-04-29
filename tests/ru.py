@@ -48,9 +48,17 @@ class RuTests(BaseTests):
             u'Авторы: к.т.н. Петров, к.ф.-м.н. Иванов, д. х.  н. Васильев и т. д. и т. п.',
             u'Авторы: к.␣т.␣н. Петров, к.␣ф.␣=м.␣н. Иванов, д.␣х.␣н. Васильев и␣т.␣д. и␣т.␣п.')
 
+    def test_minus(self):
+        self.assertText(
+            u'На улице -3 °C',
+            u'На␣улице \N{MINUS SIGN}3 °C') # XXX nbsp before degree sign?
+
+        self.assertText(
+            u'-3 °C ночью',
+            u'\N{MINUS SIGN}3 °C ночью') # XXX nbsp before degree sign?
 
     def test_normalize_whitespaces(self):
-        self.assertHtml(
+        self.assertText(
             # XXX the second case is disputed!
             u'Пробел\u00a0неразрывный,  два\u00a0\u00a0пробела, два\u00a0 разных',
             u'Пробел␣неразрывный, два пробела, два разных')

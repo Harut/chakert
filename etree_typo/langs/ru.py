@@ -177,20 +177,30 @@ class DashToken(Token):
     __slots__ = ['owner']
 
     regexp = re.compile(u'[-\N{NON-BREAKING HYPHEN}\N{FIGURE DASH}'
-                        u'\N{EN DASH}\N{EM DASH}\N{Hyphen}]') # XXX \u2043 ?
+                        u'\N{MINUS SIGN}\N{EN DASH}\N{EM DASH}\N{Hyphen}]')
 
     def morph(self, prev, next):
-        if self != u'\N{EM DASH}' and prev[0] is None:
-            self = self.replace(DashToken(u'\N{EM DASH}', self.owner))
+        if self in u'-\N{Hyphen}':
+            if (isinstance(prev[0], SpaceToken) and
+                    isinstance(next[0], SpaceToken)):
 
-        if (self == u'-' and isinstance(prev[0], SpaceToken)
-                         and isinstance(next[0], SpaceToken)):
-            self = self.replace(DashToken(u'\N{EM DASH}', self.owner))
+                if (isinstance(prev[1], DigitsToken)
+                        and isinstance(next[1], DigitsToken)):
+                    self = self.replace(DashToken(u'\N{EN DASH}', self.owner))
+                else:
+                    self = self.replace(DashToken(u'\N{EM DASH}', self.owner))
 
-        if (self == u'-' and isinstance(prev[0], DigitsToken)
-                         and isinstance(next[0], DigitsToken)):
-            # XXX how determine if self is minus or EN DASH?
-            self = self.replace(DashToken(u'\N{EN DASH}', self.owner))
+            elif isinstance(next[0], DigitsToken):
+                # XXX how exactly determine if self is minus or EN DASH?
+                if isinstance(prev[0], DigitsToken):
+                    self = self.replace(
+                            DashToken(u'\N{EN DASH}', self.owner))
+                elif isinstance(prev[0], SpaceToken) or prev[0] is None:
+                    self = self.replace(
+                            DashToken(u'\N{MINUS SIGN}', self.owner))
+
+        if prev[0] is None and self in u'-\N{EN DASH}\N{Hyphen}':
+            self = self.replace(DashToken(u'\N{EM DASH}', self.owner))
 
         if self in u'\N{EN DASH}\N{EM DASH}' and prev[0].__class__ is SpaceToken:
             prev[0] = prev[0].replace(NbspToken(u'\u00A0', self.owner))
