@@ -12,9 +12,11 @@ def _ignorecase_repl(m):
     s = m.group()
     return '['+s+s.upper()+']'
 
-PREPOSITIONS = frozenset(u'а|ай|в|вы|во|да|до|ее|её|ей|за|и|из|их|к|ко|мы|на'
-                         u'|не|ни|но|ну|о|об|ой|он|от|по|с|со|то|ты|у|уж'
-                         u'|я'.split(u'|'))
+PREPOSITIONS = frozenset(u'а|ай|в|во|да|до|за|и|из|к|ко|на'
+                         u'|не|ни|но|ну|о|об|ой|от|по|с|со|то|у|уж'
+                         u''.split(u'|'))
+# XXX stick short pronouns to the next word or not?
+SHORT_PRONOUNS = frozenset(u'вы|ее|её|ей|их|мы|он|ты|я'.split(u'|'))
 PARTICLES = frozenset(u'б|бы|ж|же|ли|ль'.split(u'|'))
 HYPHEN_PARTICLES = frozenset(u'то|либо|нибудь|ка|де|таки'.split(u'|'))
 HYPHEN_PREPOSITIONS = frozenset(u'во|в|кое|из|по'.split(u'|'))
@@ -121,7 +123,7 @@ class PunctuationToken(Token):
     regexp = re.compile(u'[\.,;\'?!%&№…+­@]')
 
     def morph(self, prev, next):
-        if '.' == self == next[0]:
+        if '.' == self == next[0] and prev[0] not in '!?':
             self = self.replace(PunctuationToken(u'…', self.owner))
             while next[0] == '.':
                 next.pop(0).drop()
@@ -189,6 +191,16 @@ class DashToken(Token):
                     self = self.replace(DashToken(u'\N{EN DASH}', self.owner))
                 else:
                     self = self.replace(DashToken(u'\N{EM DASH}', self.owner))
+
+            elif (isinstance(prev[0], PunctuationToken) and 
+                    (prev[0] == u'…' or 
+                        (prev[0] == u'.' and 
+                         isinstance(prev[1], PunctuationToken))) and
+                    isinstance(next[0], SpaceToken)):
+                # Em dash after ellipsis:
+                # Вы уверены?..— сказал медведь.
+                # Да…— сказали звери
+                self = self.replace(DashToken(u'\N{EM DASH}', self.owner))
 
             elif isinstance(next[0], DigitsToken):
                 # XXX how exactly determine if self is minus or EN DASH?
