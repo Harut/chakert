@@ -41,6 +41,11 @@ class EnTests(BaseTests):
             u'A long time ago in a galaxy far away...',
             u'A␣long time ago in␣a␣galaxy far away…')
 
+    def test_ellipse_combined(self):
+        self.assertText(
+            u'Yes.... No...! May be...? Anyway..., it\'s fine!',
+            u'Yes…. No…! May be…? Anyway…, it\'s fine!')
+
 
     def test_minus(self):
         self.assertText(

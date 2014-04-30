@@ -101,10 +101,11 @@ class PunctuationToken(Token):
     regexp = re.compile(u'[\.,;\'?!%&…+­@]')
 
     def morph(self, prev, next):
-        if '.' == self == next[0]:
+        if '.' == self == next[0] == next[1] \
+                and not isinstance(prev[0], PunctuationToken):
             self = self.replace(PunctuationToken(u'…', self.owner))
-            while next[0] == '.':
-                next.pop(0).drop()
+            next.pop(0).drop()
+            next.pop(0).drop()
 
 
 class QuoteToken(Token):
