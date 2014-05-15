@@ -123,7 +123,7 @@ class PunctuationToken(Token):
     regexp = re.compile(u'[\.,;\'?!%&№…+­@]')
 
     def morph(self, prev, next):
-        if '.' == self == next[0] and prev[0] not in '!?':
+        if '.' == self == next[0] and prev[0] not in list('!?'):
             self = self.replace(PunctuationToken(u'…', self.owner))
             while next[0] == '.':
                 next.pop(0).drop()
