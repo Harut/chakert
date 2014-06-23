@@ -3,10 +3,10 @@
 from distutils.core import setup
 
 setup(
-    name='etree_typo',
+    name='chakert',
     version='0.1',
-    packages=['etree_typo',
-              'etree_typo.langs'],
+    packages=['chakert',
+              'chakert.langs'],
     requires=[
         'lxml',
     ],
@@ -15,7 +15,7 @@ setup(
     description='Typographer for lxml and plain text. '
                 'Supports English and Russian languages.',
     #long_description=open('README').read(),
-    url='http://github.com/Harut/etree_typo/',
+    url='http://github.com/Harut/chakert/',
     license='MIT',
     keywords='html lxml typography',
 )

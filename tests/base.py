@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 
 import unittest
-from etree_typo import Typograph
+from chakert import Typograph
+
 
 def highlight(txt):
     return txt.replace(u'\u00a0', u'␣')\

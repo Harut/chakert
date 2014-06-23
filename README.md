@@ -8,13 +8,13 @@ to the text.
 
 For html:
 
-    from etree_typo import Typograph
+    from chakert import Typograph
     markup = '<p><b>Typography</b> is the art and technique of arranging type.</p>'
     result_markup = Typograph.typograph_html(markup)
 
 For parsed lxml.html tree:
 
-    from etree_typo import Typograph
+    from chakert import Typograph
     from lxml import html
     markup = '<p><b>Typography</b> is the art and technique of arranging type.</p>'
     tree = html.fromstring(markup)
@@ -22,14 +22,14 @@ For parsed lxml.html tree:
 
 For plain text:
 
-    from etree_typo import Typograph
+    from chakert import Typograph
     text = 'Typography is the art and technique of arranging type.'
     result_text = Typograph.typograph_text(text)
 
 ## Replacement rules
 
 The typograph parses given text and splits it into tokens. 
-Each token is instance of `etree_typo.tokens.Token` subclass.
+Each token is instance of `chakert.tokens.Token` subclass.
 Each `Token` subclass represents a class of specific lexems with
 defined replacement rules. `Token` subclasses are, for example, 
 `WordToken`, `ParticleToken`, `AbbrToken`, `SpaceToken`,
@@ -56,7 +56,7 @@ A set of rules for Russian language.
 
 ### English
 
-A set of rules for Russian language.
+A set of rules for English language.
 
 1. Non-breaking spaces after prepositions, conjunctions and articles.
 2. Non-breaking space between month name and number of one or two digits.
