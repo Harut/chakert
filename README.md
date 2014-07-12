@@ -8,23 +8,29 @@ to the text.
 
 For html:
 
-    from chakert import Typograph
-    markup = '<p><b>Typography</b> is the art and technique of arranging type.</p>'
-    result_markup = Typograph.typograph_html(markup)
+```python
+from chakert import Typograph
+markup = '<p><b>Typography</b> is the art and technique of arranging type.</p>'
+result_markup = Typograph.typograph_html(markup)
+```
 
 For parsed lxml.html tree:
 
-    from chakert import Typograph
-    from lxml import html
-    markup = '<p><b>Typography</b> is the art and technique of arranging type.</p>'
-    tree = html.fromstring(markup)
-    result_tree = Typograph.typograph_tree(tree)
+```python
+from chakert import Typograph
+from lxml import html
+markup = '<p><b>Typography</b> is the art and technique of arranging type.</p>'
+tree = html.fromstring(markup)
+result_tree = Typograph.typograph_tree(tree)
+```
 
 For plain text:
 
-    from chakert import Typograph
-    text = 'Typography is the art and technique of arranging type.'
-    result_text = Typograph.typograph_text(text)
+```python
+from chakert import Typograph
+text = 'Typography is the art and technique of arranging type.'
+result_text = Typograph.typograph_text(text)
+```
 
 ## Replacement rules
 
@@ -50,9 +56,10 @@ A set of rules for Russian language.
 8. Если дефис окружён пробелами, то он заменяется на длинное тире, а пробел перед ним - на неразрывный.
 9. Если дефис окружен цифрами, то он преобразуется в короткое тире.
 10. Пробел + дефис перед числом на минус (−3 °C).
-11. Две и более точки подряд заменяются на многоточие, если перед ними не стоит другой знак препинания (?.. , !.. , ?!.) (кавычки и запятые не в счёт).
-12. Двойные кавычки (") заменяются на ёлочки («»). Если кавычка прилеплена к слову слева, то она считается открывающей, иначе — закрывающей.
-13. Вложенные кавычки заменяются на двойные косые нижнюю и верхнюю („“).
+11. Два и более дефиса подряд заменяются на тире или минус так же, как одиночный дефис. Если ни одно правил не подходит, заменяются на длинное тире.
+12. Две и более точки подряд заменяются на многоточие, если перед ними не стоит другой знак препинания (?.. , !.. , ?!.) (кавычки и запятые не в счёт).
+13. Двойные кавычки (") заменяются на ёлочки («»). Если кавычка прилеплена к слову слева, то она считается открывающей, иначе — закрывающей.
+14. Вложенные кавычки заменяются на двойные косые нижнюю и верхнюю („“).
 
 ### English
 
@@ -64,7 +71,8 @@ A set of rules for English language.
 4. If the hyphen is surrounded by spaces, it is replaced by em dash, and the space before is replaced y non-breaking space.
 5. If the hyphen is surrounded by numbers, it is replaced by en dash.
 6. Space + hyphen before a number is replaced by minus sign (−3 °C)
-7. Exactly 3 points are replaced by ellipsys (it can be 4 points in line in English https://dl.dropboxusercontent.com/u/351006/ellipsis.png).
-8. Double quotes (") are replaced by left and right double quotes.
-9. Nested quotes are replaced to left and right single quotes.
+7. Two or more hyphens in a row are replaced as they are single hyphen. If any replacement rules do not match, they are replaced by em dash.
+8. Exactly 3 points are replaced by ellipsys (it can be 4 points in line in English https://dl.dropboxusercontent.com/u/351006/ellipsis.png).
+9. Double quotes (") are replaced by left and right double quotes.
+10. Nested quotes are replaced to left and right single quotes.
 
