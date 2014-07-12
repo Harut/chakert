@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from .base import BaseTests
+from unittest import skip
 
 
 class RuTests(BaseTests):
@@ -42,6 +43,7 @@ class RuTests(BaseTests):
             u'А в ответ ему: "Таити, Таити! Не были мы на вашем "Таити"!".',
             u'А␣в␣ответ ему: «Таити, Таити! Не␣были мы на␣вашем „Таити“!».')
 
+    @skip('Not implemented')
     def test_3_1(self):
         self.assertText(
             u'А в ответ ему: «Таити, Таити! Не были мы на вашем «Таити»!».',
@@ -80,6 +82,15 @@ class RuTests(BaseTests):
         self.assertText(
             u'На улице -- мороз',
             u'На␣улице␣\N{EM DASH} мороз')
+
+        self.assertText(
+            u'На улице---мороз',
+            u'На␣улице\N{EM DASH}мороз')
+
+        # Check if all hyphen rules are applied on double hyphen
+        self.assertText(
+            u'На улице --3 °C',
+            u'На␣улице \N{MINUS SIGN}3 °C')
 
     def test_normalize_whitespaces(self):
         self.assertText(

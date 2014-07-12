@@ -29,9 +29,9 @@ class EnTests(BaseTests):
     def test_en_dash(self):
         self.assertText(
             u'Ages 5 - 8. Ages 5-8.',
-            u'Ages 5 – 8. Ages 5–8.')
+            u'Ages 5␣– 8. Ages 5–8.')
 
-    def test_en_dash(self):
+    def test_em_dash(self):
         self.assertText(
             u'An em-dash is used to indicate a break in thought - as illustrated here',
             u'An␣em-dash is used to␣indicate a␣break in␣thought␣— as␣illustrated here')
@@ -50,6 +50,14 @@ class EnTests(BaseTests):
         self.assertText(
             u'Double -- hyphen.',
             u'Double␣\N{EM DASH} hyphen.')
+        self.assertText(
+            u'Double---hyphen.',
+            u'Double\N{EM DASH}hyphen.')
+
+        # Check if all hyphen rules are applied on double hyphen
+        self.assertText(
+            u'--3 °C outdoor',
+            u'\N{MINUS SIGN}3 °C outdoor') # XXX nbsp before degree sign?
 
     def test_minus(self):
         self.assertText(

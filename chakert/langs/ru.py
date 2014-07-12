@@ -183,6 +183,13 @@ class DashToken(Token):
 
     def morph(self, prev, next):
         if self in u'-\N{Hyphen}':
+            while next[0] in u'-\N{Hyphen}':
+                # replace double hyphen to EM DASH in all cases
+                # Afterwards it can be replaced to MINUS, EN DASH according 
+                # correspondent replacement rules
+                self = self.replace(DashToken(u'\N{EM DASH}', self.owner))
+                next.pop(0).drop()
+
             if (isinstance(prev[0], SpaceToken) and
                     isinstance(next[0], SpaceToken)):
 
