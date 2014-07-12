@@ -76,6 +76,11 @@ class RuTests(BaseTests):
             u'-3 °C ночью',
             u'\N{MINUS SIGN}3 °C ночью') # XXX nbsp before degree sign?
 
+    def test_double_hyphen(self):
+        self.assertText(
+            u'На улице -- мороз',
+            u'На␣улице␣\N{EM DASH} мороз')
+
     def test_normalize_whitespaces(self):
         self.assertText(
             # XXX the second case is disputed!

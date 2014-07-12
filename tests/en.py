@@ -46,6 +46,10 @@ class EnTests(BaseTests):
             u'Yes.... No...! May be...? Anyway..., it\'s fine!',
             u'Yes…. No…! May be…? Anyway…, it\'s fine!')
 
+    def test_double_hyphen(self):
+        self.assertText(
+            u'Double -- hyphen.',
+            u'Double␣\N{EM DASH} hyphen.')
 
     def test_minus(self):
         self.assertText(
