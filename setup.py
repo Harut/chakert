@@ -4,10 +4,11 @@ from distutils.core import setup
 
 setup(
     name='chakert',
-    version='0.1b',
+    version='0.1.1',
     packages=['chakert',
               'chakert.langs'],
     requires=[
+        'six',
         'lxml',
     ],
     author='Harut Dagesian',

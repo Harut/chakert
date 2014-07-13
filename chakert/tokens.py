@@ -1,6 +1,11 @@
 # -*- coding: utf-8 -*-
 import re
 
+try: #python3 support
+    unicode
+except NameError:
+    unicode = str
+
 
 class Token(unicode):
 

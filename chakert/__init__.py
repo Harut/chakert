@@ -1,6 +1,6 @@
+from .tokenizer import BaseTypograph
+from .langs import rules_by_language
 
-from tokenizer import BaseTypograph
-from langs import rules_by_language
 
 class Typograph(BaseTypograph):
 

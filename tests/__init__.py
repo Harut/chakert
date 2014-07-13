@@ -1,2 +1,2 @@
-from ru import *
-from en import *
+from .ru import RuTests
+from .en import EnTests

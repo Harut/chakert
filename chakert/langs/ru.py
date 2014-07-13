@@ -7,6 +7,11 @@ from ..tokenizer import TokenString
 import logging
 logger = logging.getLogger(__name__)
 
+try: #python3 support
+    unicode
+except NameError:
+    unicode = str
+
 
 def _ignorecase_repl(m):
     s = m.group()

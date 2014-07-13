@@ -17,7 +17,7 @@ class LazyList(object):
         if self.iterator is None:
             self.iterator = self.constructor()
         while len(self.data) <= index:
-            self.data.append(self.iterator.next())
+            self.data.append(next(self.iterator))
         return self.data[index]
 
     def reset(self):

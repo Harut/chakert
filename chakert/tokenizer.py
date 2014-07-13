@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import re
+import six
 from lxml import html
 from .util import LazyList, inner_html
 
@@ -20,10 +21,10 @@ class TokenCompileMeta(type):
 
 
 # XXX name of class is not perfect
+@six.add_metaclass(TokenCompileMeta)
 class TokenString(object):
 
     token_classes = NotImplemented
-    __metaclass__ = TokenCompileMeta
 
     def __init__(self, typograph, text, element=None, apply_to=None):
         self.typograph = typograph
