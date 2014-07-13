@@ -78,3 +78,23 @@ A set of rules for English language.
 9. Double quotes (") are replaced by left and right double quotes.
 10. Nested quotes are replaced to left and right single quotes.
 
+## Adding own rules and languages
+
+In contrast with regexp-based typography fixers, the key feature of chakert is readability of
+rules and expected simplicity of adding new rules.
+
+The library uses tokenizer, splitting given text to the tokens of various classes. Each token
+class defines own replacement rules in `morph` method. In this method, it is allowed to iterate
+over sibling nodes in forward and backward direction and perform simple text changing operations
+through provied API: remove token, replace one token with another.
+
+The only thing you should really carry about is to keep iterator state up-to date while removing
+or adding a token. It may be useful to learn chakert implementation to understand how it works.
+
+If you are ready to suggest new rules or new languages, but you're not sure if you can implement
+them well, fill free to send pull requests with test cases!
+
+General policy for rules included by default is that they should be appliable on any general text,
+and they should not be complicated.
+
+
