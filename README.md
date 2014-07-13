@@ -4,6 +4,8 @@ Tool applying a set of common typography rules
 (such as non-breaking spaces, dashes and ellipsyses replacements, etc) 
 to the text.
 
+Tested under python 2.7 and 3.4.
+
 ## Usage
 
 For html:
