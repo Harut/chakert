@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 import re
-import six
 from lxml import html
 from .util import LazyList, inner_html
+from ._compat import add_metaclass
 
 class TokenCompileMeta(type):
 
@@ -21,7 +21,7 @@ class TokenCompileMeta(type):
 
 
 # XXX name of class is not perfect
-@six.add_metaclass(TokenCompileMeta)
+@add_metaclass(TokenCompileMeta)
 class TokenString(object):
 
     token_classes = NotImplemented

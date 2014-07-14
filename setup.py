@@ -8,7 +8,6 @@ setup(
     packages=['chakert',
               'chakert.langs'],
     requires=[
-        'six',
         'lxml',
     ],
     author='Harut Dagesian',
