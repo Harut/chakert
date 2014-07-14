@@ -172,9 +172,20 @@ class BaseTypograph(object):
         return inner_html(doc)
 
     @classmethod
-    def typograph_text(cls, text, lang):
+    def _typograph_line(cls, text, lang):
         typograph = cls(lang)
         typograph.new_node(text)
         typograph.morph()
         return typograph.text
+
+    @classmethod
+    def typograph_text(cls, text, lang, line_breaks=True):
+        if not line_breaks:
+            # single line text, where line brakes are equal to whitespaces
+            # (like in HTML)
+            return cls._typograph_line(text, lang)
+
+        # multi-line text with valuable line breaks
+        return '\n'.join([cls._typograph_line(line, lang)
+                          for line in text.splitlines()])
 

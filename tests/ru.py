@@ -98,6 +98,35 @@ class RuTests(BaseTests):
             u'Пробел\u00a0неразрывный,  два\u00a0\u00a0пробела, два\u00a0 разных',
             u'Пробел␣неразрывный, два пробела, два разных')
 
+    def test_line_breaks(self):
+        def strip(txt):
+            return '\n'.join([x.strip() for x in txt.strip().splitlines()])
+
+        self.assertText(
+            strip(u'''
+            - Да!
+            - Нет!
+
+            Договориться они так и не сумели...
+            '''),
+            strip(u'''
+            \N{EM DASH} Да!
+            \N{EM DASH} Нет!
+
+            Договориться они так и␣не␣сумели…
+            '''),
+            check_html=False)
+
+        self.assertText(
+            strip(u'''
+            - Да!
+            - Нет!
+            '''),
+            strip(u'''
+            \N{EM DASH} Да!␣\N{EM DASH} Нет!
+            '''),
+            line_breaks=False)
+
     def test_7(self):
         self.assertHtml(
             u'<p>- Да!</p><p>- Нет!</p>',
