@@ -1,8 +1,8 @@
 # Typography for lxml.html or plain text
 
-Tool applying a set of common typography rules 
-(such as non-breaking spaces, dashes and ellipsyses replacements, etc) 
-to the text.
+Tool applying a set of common typography rules to the text:
+non-breaking spaces, dashes and ellipsyses replacements, etc.
+
 
 Tested under python 2.7 and 3.4.
 
