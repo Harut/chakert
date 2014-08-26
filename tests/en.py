@@ -36,6 +36,10 @@ class EnTests(BaseTests):
             u'An em-dash is used to indicate a break in thought - as illustrated here',
             u'An␣em-dash is used to␣indicate a␣break in␣thought␣— as␣illustrated here')
 
+    def test_dash_at_end(self):
+        # no replacement
+        self.assertText(u'Yes -', u'Yes -')
+
     def test_ellipse(self):
         self.assertText(
             u'A long time ago in a galaxy far away...',

@@ -172,10 +172,11 @@ class DashToken(Token):
 
     regexp = re.compile(u'[-\N{NON-BREAKING HYPHEN}\N{FIGURE DASH}'
                         u'\N{EN DASH}\N{EM DASH}\N{Hyphen}]') # XXX \u2043 ?
+    hyphens = list(u'-\N{Hyphen}')
 
     def morph(self, prev, next):
         if self in u'-\N{Hyphen}':
-            while next[0] in u'-\N{Hyphen}':
+            while next[0] in self.hyphens:
                 # replace double hyphen to EM DASH in all cases
                 # Afterwards it can be replaced to MINUS, EN DASH according 
                 # correspondent replacement rules

@@ -38,6 +38,10 @@ class RuTests(BaseTests):
             u'-Что?!.- возразил Лось.',
             u'—Что?!.— возразил Лось.')
 
+    def test_dash_at_end(self):
+        # no replacement
+        self.assertText(u'Дар -', u'Дар -')
+
     def test_3(self):
         self.assertText(
             u'А в ответ ему: "Таити, Таити! Не были мы на вашем "Таити"!".',
