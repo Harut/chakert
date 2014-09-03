@@ -53,6 +53,11 @@ class RuTests(BaseTests):
             u'А в ответ ему: «Таити, Таити! Не были мы на вашем «Таити»!».',
             u'А␣в␣ответ ему: «Таити, Таити! Не␣были мы на␣вашем „Таити“!».')
 
+    def test_quote_start(self):
+        self.assertText(
+            u'"Тяжело было" - да',
+            u'«Тяжело было»␣— да')
+
     def test_4(self):
         self.assertText(
             u'Оно было светло-красного цвета и \N{RIGHT DOUBLE QUOTATION MARK}улыбалось" по-доброму.',
