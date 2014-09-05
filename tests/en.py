@@ -26,6 +26,11 @@ class EnTests(BaseTests):
             u'He said, "She yelled, "I\'m going to kill you!"',
             u'He said, ”She yelled, ‘I\'m going to␣kill you!’')
 
+    def test_quote_start(self):
+        self.assertText(
+            u'"She yelled"',
+            u'”She yelled“')
+
     def test_en_dash(self):
         self.assertText(
             u'Ages 5 - 8. Ages 5-8.',

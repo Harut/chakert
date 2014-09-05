@@ -140,7 +140,7 @@ class QuoteToken(Token):
             self = self.replace(QuoteToken(u"\N{LEFT DOUBLE QUOTATION MARK}", self.owner))
 
         if self == u'"':
-            if isinstance(prev[0], SpaceToken):
+            if isinstance(prev[0], SpaceToken) or prev[0] is None:
                 quote = self.open_quotes[len(quote_stack)] if \
                             len(quote_stack) < len(self.open_quotes) else \
                             self.open_quotes[-1]
