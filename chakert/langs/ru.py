@@ -18,7 +18,7 @@ def _ignorecase_repl(m):
     return '['+s+s.upper()+']'
 
 PREPOSITIONS = frozenset(u'а|ай|в|во|да|до|за|и|из|к|ко|на'
-                         u'|не|ни|но|ну|о|об|ой|от|по|с|со|то|у|уж'
+                         u'|не|ни|но|ну|о|об|ой|от|по|с|со|то|у|уж|№'
                          u''.split(u'|'))
 # XXX stick short pronouns to the next word or not?
 SHORT_PRONOUNS = frozenset(u'вы|ее|её|ей|их|мы|он|ты|я'.split(u'|'))
@@ -32,6 +32,8 @@ ALL_PARTICLES = (PREPOSITIONS | PARTICLES |
 class WordToken(BaseWordToken):
 
     __slots__ = ['owner']
+
+    regexp = re.compile(u'[\d\w\N{ACUTE ACCENT}¹²³№]+', re.UNICODE)
 
     def __new__(cls, content, owner):
         if content.lower() in ALL_PARTICLES:
@@ -125,7 +127,7 @@ class PunctuationToken(Token):
 
     __slots__ = ['owner']
 
-    regexp = re.compile(u'[\.,;\'?!%&№…+­@]')
+    regexp = re.compile(u'[\.,;\'?!%&…+­@]')
 
     def morph(self, prev, next):
         if '.' == self == next[0] and prev[0] not in list('!?'):

@@ -107,6 +107,11 @@ class RuTests(BaseTests):
             u'Пробел\u00a0неразрывный,  два\u00a0\u00a0пробела, два\u00a0 разных',
             u'Пробел␣неразрывный, два пробела, два разных')
 
+    def test_number_mark(self):
+        self.assertHtml(
+            u'№ 42',
+            u'№␣42')
+
     def test_line_breaks(self):
         def strip(txt):
             return '\n'.join([x.strip() for x in txt.strip().splitlines()])
