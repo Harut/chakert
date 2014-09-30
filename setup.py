@@ -4,7 +4,7 @@ from distutils.core import setup
 
 setup(
     name='chakert',
-    version='0.1',
+    version='0.1.1',
     packages=['chakert',
               'chakert.langs'],
     requires=[
