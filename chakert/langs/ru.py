@@ -104,12 +104,13 @@ class DigitsToken(BaseDigitsToken):
     __slots__ = ['owner']
 
     year_re = re.compile(u'(?:г|гг|год[а-я]{,3})$',
-                         re.IGNORECASE)
+                         re.IGNORECASE | re.UNICODE)
     months_re = re.compile(u'(?:января|февраля|марта|апреля|мая|июня|июля|'
                            u'августа|сентября|ноября|декабря)$',
-                           re.IGNORECASE)
+                           re.IGNORECASE | re.UNICODE)
 
     def morph(self, prev, next):
+
         if len(self) <= 4 and \
                 next[0].__class__ is SpaceToken and\
                 next[1].__class__ is WordToken and \

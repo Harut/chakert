@@ -112,6 +112,11 @@ class RuTests(BaseTests):
             u'№ 42',
             u'№␣42')
 
+    def test_month(self):
+        self.assertHtml(
+            u'Поздравляю с 8 Марта!',
+            u'Поздравляю с␣8␣Марта!')
+
     def test_line_breaks(self):
         def strip(txt):
             return '\n'.join([x.strip() for x in txt.strip().splitlines()])
