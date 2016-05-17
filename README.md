@@ -1,5 +1,7 @@
 # Typography for lxml.html or plain text
 
+[![Build Status](https://travis-ci.org/Harut/chakert.svg?branch=master)](https://travis-ci.org/Harut/chakert)
+
 Tool applying a set of common typography rules to the text:
 non-breaking spaces, dashes and ellipsyses replacements, etc.
 
