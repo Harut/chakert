@@ -75,11 +75,11 @@ class BaseTypograph(object):
         self.quote_stack = []
         self.TokenString = self.rules_by_language.get(lang)
 
-    def new_node(self, text, element=None, apply_to=None):
+    def new_node(self, text, element=None, apply_to=None, lstrip=True):
         # normalize whitespaces
         if self.token_strings:
             last_string = self.token_strings[-1].text
-            if _end_space_re.search(last_string) is not None:
+            if lstrip and _end_space_re.search(last_string) is not None:
                 text = _start_space_re.sub(u'', text)
         text = _space_re.sub(u' ', text)
 
@@ -143,14 +143,21 @@ class BaseTypograph(object):
     @classmethod
     def _typograph_tree(cls, tree, lang=None, typograph=None):
         if 'lang' in tree.attrib:
-            lang = tree.attrib['lang'].split('_')[1]
+            # XXX tests needed
+            lang = tree.attrib['lang']
+            if '_' in lang:
+                lang = lang.split('_')[1]
         if typograph is None:
             typograph = cls(lang)
         if tree.text:
             typograph.new_node(tree.text, tree, apply_to="text")
         for child in tree.iterchildren():
+            lstrip = True
+            if child.tag in ['cite', 'code', 'pre', 'style', 'script']:
+                lstrip = False # XXX it's a hack
+                pass
             # XXX full list of block tags!
-            if child.tag in ['p', 'blockquote', 'div']:
+            elif child.tag in ['p', 'blockquote', 'div']:
                 # block element, flush context
                 typograph.morph()
                 cls._typograph_tree(child, lang).morph()
@@ -158,7 +165,7 @@ class BaseTypograph(object):
             else:
                 cls._typograph_tree(child, lang, typograph)
             if child.tail:
-                typograph.new_node(child.tail, child, apply_to='tail')
+                typograph.new_node(child.tail, child, apply_to='tail', lstrip=lstrip)
         return typograph
 
     @classmethod

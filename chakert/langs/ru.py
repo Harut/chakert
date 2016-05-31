@@ -173,7 +173,7 @@ class QuoteToken(Token):
         elif self in self.close_quotes:
             if not quote_stack:
                 prevs_str = u''.join(reversed([prev[i]
-                                               for i in xrange(20)
+                                               for i in range(20)
                                                if prev[i]]))
                 logger.warn(u'Unmatched closing quote after: %s', prevs_str)
             else:
