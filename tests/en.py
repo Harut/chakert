@@ -31,6 +31,11 @@ class EnTests(BaseTests):
             u'"She yelled"',
             u'”She yelled“')
 
+    def test_quote_in_braces(self):
+        self.assertText(
+            u'No ("She yelled")',
+            u'No (”She yelled“)')
+
     def test_en_dash(self):
         self.assertText(
             u'Ages 5 - 8. Ages 5-8.',
@@ -82,3 +87,18 @@ class EnTests(BaseTests):
             u'- Hello!',
             u'- Hello!')
 
+
+    def test_ignored_default(self):
+        self.assertHtml(
+            u'The code <code>function("hello")</code> is not called',
+            u'The␣code <code>function("hello")</code> is not called')
+
+        self.assertHtml(
+            u'The code <CODE>function("hello")</CODE> is not called',
+            u'The␣code <code>function("hello")</code> is not called')
+
+    def test_ignored_custom(self):
+        self.assertHtml(
+            u'The code <cite>function("hello")</cite> is not called',
+            u'The␣code <cite>function("hello")</cite> is not called',
+            ignored=['cite'])

@@ -77,6 +77,24 @@ class DigitsToken(Token):
     regexp = re.compile(u'[\d¹²³]+(?!\w)', re.UNICODE)
 
 
+class CodeToken(Token):
+
+    __slots__ = ['owner']
+
+    def morph(self, prev, next):
+        pass
+
+    def drop(self):
+        pass
+
+    def replace(self, token):
+        pass
+
+    def __bool__(self):
+        return True
+    __nonzero__ = __bool__
+
+
 class OtherToken(Token):
 
     __slots__ = ['owner']

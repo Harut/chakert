@@ -140,7 +140,8 @@ class QuoteToken(Token):
             self = self.replace(QuoteToken(u"\N{LEFT DOUBLE QUOTATION MARK}", self.owner))
 
         if self == u'"':
-            if isinstance(prev[0], SpaceToken) or prev[0] is None:
+            if isinstance(prev[0], SpaceToken) or \
+                    prev[0] == '(' or prev[0] is None:
                 quote = self.open_quotes[len(quote_stack)] if \
                             len(quote_stack) < len(self.open_quotes) else \
                             self.open_quotes[-1]
@@ -157,7 +158,7 @@ class QuoteToken(Token):
         elif self in self.close_quotes:
             if not quote_stack:
                 prevs_str = u''.join(reversed([prev[i]
-                                               for i in xrange(20)
+                                               for i in range(20)
                                                if prev[i]]))
                 logger.warn(u'Unmatched closing quote after: %s', prevs_str)
             else:

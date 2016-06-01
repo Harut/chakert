@@ -28,8 +28,8 @@ class BaseTests(unittest.TestCase):
                 print('\n'+highlight(value)+'\n'+highlight(value2))
             self.assertEqual(highlight(value), highlight(value2))
 
-    def assertHtml(self, text, *args):
-        value = Typograph.typograph_html(text, self.lang)
+    def assertHtml(self, text, *args, **kwargs):
+        value = Typograph.typograph_html(text, self.lang, **kwargs)
         value_hl = highlight(value)
         if not value_hl in args:
             print('\n')
@@ -39,7 +39,7 @@ class BaseTests(unittest.TestCase):
             print('\n')
         self.assertIn(value_hl, args)
 
-        value2 = Typograph.typograph_html(value, self.lang)
+        value2 = Typograph.typograph_html(value, self.lang, **kwargs)
         if value != value2:
             print('\n'+highlight(value)+'\n'+highlight(value2))
         self.assertEqual(highlight(value), highlight(value2))
