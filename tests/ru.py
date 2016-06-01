@@ -58,6 +58,11 @@ class RuTests(BaseTests):
             u'"Тяжело было" - да',
             u'«Тяжело было»␣— да')
 
+    def test_quote_in_braces(self):
+        self.assertText(
+            u'Спроси ("Тяжело было") - да',
+            u'Спроси («Тяжело было»)␣— да')
+
     def test_4(self):
         self.assertText(
             u'Оно было светло-красного цвета и \N{RIGHT DOUBLE QUOTATION MARK}улыбалось" по-доброму.',
@@ -146,10 +151,28 @@ class RuTests(BaseTests):
             '''),
             line_breaks=False)
 
-    def test_7(self):
+    def test_block(self):
         self.assertHtml(
             u'<p>- Да!</p><p>- Нет!</p>',
             u'<p>— Да!</p><p>— Нет!</p>')
+
+        self.assertHtml(
+            u'<P>- Да!</P><P>- Нет!</P>',
+            u'<p>— Да!</p><p>— Нет!</p>')
+
+        self.assertHtml(
+            u'- Да!<br>- Нет!',
+            u'— Да!<br>— Нет!')
+
+    def test_block_custom(self):
+        self.assertHtml(
+            u'<span>- Да!</span><span>- Нет!</span>',
+            u'<span>— Да!</span><span>- Нет!</span>')
+
+        self.assertHtml(
+            u'<span>- Да!</span><span>- Нет!</span>',
+            u'<span>— Да!</span><span>— Нет!</span>',
+            block_tags=['span'])
 
     def test_nested_tags(self):
         self.assertHtml(
@@ -166,4 +189,37 @@ class RuTests(BaseTests):
         self.assertHtml(
             u'<p><b>Неученье </b> <b>\u00a0</b> - тьма!</p>',
             u'<p><b>Неученье␣</b><b></b>— тьма!</p>')
+
+    def test_ignored_default(self):
+        self.assertHtml(
+            u'Код <code>function("hello")</code> не выполняется',
+            u'Код <code>function("hello")</code> не␣выполняется')
+
+        self.assertHtml(
+            u'Код <CODE>function("hello")</CODE> не выполняется',
+            u'Код <code>function("hello")</code> не␣выполняется')
+
+    def test_ignored_custom(self):
+        self.assertHtml(
+            u'Код <cite>function("hello")</cite> не выполняется',
+            u'Код <cite>function("hello")</cite> не␣выполняется',
+            ignored=['cite'])
+
+    def test_ignored_whitespaces(self):
+        self.assertHtml(
+            u'Код <code>function("hello")</code>- не выполняется',
+            u'Код <code>function("hello")</code>- не␣выполняется')
+
+        self.assertHtml(
+            u'Код <pre>function("hello")</pre>- не выполняется',
+            u'Код <pre>function("hello")</pre>— не␣выполняется')
+
+    def test_lang_switch(self):
+        self.assertHtml(
+            u'<p>A difference</p><p lang="en">A difference</p>',
+            u'<p>A difference</p><p lang="en">A␣difference</p>')
+
+        self.assertHtml(
+            u'<p lang="en_US">A difference</p>',
+            u'<p lang="en_US">A␣difference</p>')
 

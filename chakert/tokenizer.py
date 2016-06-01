@@ -1,8 +1,10 @@
 # -*- coding: utf-8 -*-
 import re
 from lxml import html
+from .tokens import CodeToken
 from .util import LazyList, inner_html
 from ._compat import add_metaclass
+
 
 class TokenCompileMeta(type):
 
@@ -68,6 +70,15 @@ class BaseTypograph(object):
 
     # XXX name of attribute is not perfect
     rules_by_language = {}
+
+
+    ignored = ['code', 'pre', 'style', 'script', 'canvas', 'audio', 'video']
+    block_tags = [
+        'address', 'article', 'aside', 'blockquote', 'br', 'dd', 'div', 'dl',
+        'fieldset', 'figcaption', 'figure', 'footer', 'form',
+        'h1', 'h2', 'h3', 'h4', 'h5', 'h6',
+        'header', 'hgroup', 'hr', 'noscript', 'ol', 'output',
+        'p', 'pre', 'section', 'table', 'td', 'tfoot', 'ul']
 
     def __init__(self, lang):
         self.lang = lang
@@ -141,41 +152,52 @@ class BaseTypograph(object):
 
 
     @classmethod
-    def _typograph_tree(cls, tree, lang=None, typograph=None):
+    def _typograph_tree(cls, tree, lang=None, typograph=None, ignored=(), block_tags=()):
         if 'lang' in tree.attrib:
-            # XXX tests needed
             lang = tree.attrib['lang']
             if '_' in lang:
-                lang = lang.split('_')[1]
+                lang = lang.split('_')[0]
         if typograph is None:
             typograph = cls(lang)
         if tree.text:
             typograph.new_node(tree.text, tree, apply_to="text")
         for child in tree.iterchildren():
             lstrip = True
-            if child.tag in ['cite', 'code', 'pre', 'style', 'script']:
-                lstrip = False # XXX it's a hack
-                pass
-            # XXX full list of block tags!
-            elif child.tag in ['p', 'blockquote', 'div']:
+
+            if child.tag.lower() in block_tags:
                 # block element, flush context
                 typograph.morph()
-                cls._typograph_tree(child, lang).morph()
+                if child.tag.lower() not in ignored:
+                    subtypo = cls._typograph_tree(child, lang,
+                                                  ignored=ignored,
+                                                  block_tags=block_tags)
+                    subtypo.morph()
                 typograph = cls(lang)
+            elif child.tag.lower() in ignored:
+                token_string = typograph.TokenString(typograph, '', child)
+                token_string.tokens = [CodeToken('', token_string)]
+                typograph.token_strings.append(token_string)
             else:
-                cls._typograph_tree(child, lang, typograph)
+                cls._typograph_tree(child, lang, typograph,
+                                    ignored=ignored,
+                                    block_tags=block_tags)
             if child.tail:
                 typograph.new_node(child.tail, child, apply_to='tail', lstrip=lstrip)
         return typograph
 
     @classmethod
-    def typograph_tree(cls, tree, lang):
-        cls._typograph_tree(tree, lang).morph()
+    def typograph_tree(cls, tree, lang, ignored=None, block_tags=None):
+        if ignored is None:
+            ignored = cls.ignored # XXX bad interface!
+        if block_tags is None:
+            block_tags = cls.block_tags
+        cls._typograph_tree(tree, lang, ignored=ignored,
+                            block_tags=block_tags).morph()
 
     @classmethod
-    def typograph_html(cls, markup, lang):
+    def typograph_html(cls, markup, lang, ignored=None, block_tags=None):
         doc = html.fragment_fromstring(markup, create_parent=True)
-        cls.typograph_tree(doc, lang)
+        cls.typograph_tree(doc, lang, ignored=ignored, block_tags=block_tags)
         return inner_html(doc)
 
     @classmethod
