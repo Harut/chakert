@@ -223,3 +223,7 @@ class RuTests(BaseTests):
             u'<p lang="en_US">A difference</p>',
             u'<p lang="en_US">A␣difference</p>')
 
+    def test_comment(self):
+        self.assertHtml(
+            u'<p>А комментарии</p> <!-- не обрабатываются -->',
+            u'<p>А␣комментарии</p> <!-- не обрабатываются -->')
