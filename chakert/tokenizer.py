@@ -176,7 +176,7 @@ class BaseTypograph(object):
                                                   block_tags=block_tags)
                     subtypo.morph()
                 typograph = cls(lang)
-            elif tag in ignored:
+            elif tag in ignored or tag is None:
                 token_string = typograph.TokenString(typograph, '', child)
                 token_string.tokens = [CodeToken('', token_string)]
                 typograph.token_strings.append(token_string)
