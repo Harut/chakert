@@ -8,7 +8,11 @@
 import sys
 
 PY2 = sys.version_info[0] == 2
-PYPY = hasattr(sys, 'pypy_translation_info')
+
+if PY2:
+    string_types = basestring,
+else:
+    string_types = str,
 
 
 def add_metaclass(metaclass):

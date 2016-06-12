@@ -3,7 +3,7 @@ import re
 from lxml import html
 from .tokens import CodeToken
 from .util import LazyList, inner_html
-from ._compat import add_metaclass
+from ._compat import add_metaclass, string_types
 
 
 class TokenCompileMeta(type):
@@ -163,17 +163,20 @@ class BaseTypograph(object):
             typograph.new_node(tree.text, tree, apply_to="text")
         for child in tree.iterchildren():
             lstrip = True
+            tag = (child.tag.lower()
+                    if isinstance(child.tag, string_types)
+                    else None)
 
-            if child.tag.lower() in block_tags:
+            if tag in block_tags:
                 # block element, flush context
                 typograph.morph()
-                if child.tag.lower() not in ignored:
+                if tag not in ignored:
                     subtypo = cls._typograph_tree(child, lang,
                                                   ignored=ignored,
                                                   block_tags=block_tags)
                     subtypo.morph()
                 typograph = cls(lang)
-            elif child.tag.lower() in ignored:
+            elif tag in ignored:
                 token_string = typograph.TokenString(typograph, '', child)
                 token_string.tokens = [CodeToken('', token_string)]
                 typograph.token_strings.append(token_string)
