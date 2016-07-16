@@ -4,7 +4,7 @@ from distutils.core import setup
 
 setup(
     name='chakert',
-    version='0.1.2',
+    version='0.2',
     packages=['chakert',
               'chakert.langs'],
     requires=[
@@ -17,5 +17,5 @@ setup(
     #long_description=open('README').read(),
     url='http://github.com/Harut/chakert/',
     license='MIT',
-    keywords='html lxml typography',
+    keywords='html lxml typography typographer typo',
 )

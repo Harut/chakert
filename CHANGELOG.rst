@@ -1,3 +1,13 @@
+0.2
+---
+
+* Fixed HTML-comments handling
+* Fixed a bug: quote after openning brace was considered as closing brace
+* Fixed lang attribute handling
+* Handling of not-typographed tags like <code>, <pre>, etc.
+* A complete list of block tags
+* Made a list of block and ignored tags customisable
+
 0.1.2
 -----
 
