@@ -227,3 +227,8 @@ class RuTests(BaseTests):
         self.assertHtml(
             u'<p>А комментарии</p> <!-- не обрабатываются --> и хвост',
             u'<p>А␣комментарии</p> <!-- не обрабатываются --> и␣хвост')
+
+    #@unittest.expectedFailure
+    def test_multi_paragraph_quote(self):
+        self.assertHtml('<p>"начало </p><p>конец"</p>',
+                        '<p>«начало </p><p>конец»</p>')
