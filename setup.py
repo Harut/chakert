@@ -2,14 +2,16 @@
 
 from distutils.core import setup
 
+extras_requires = {
+    'html': ['lxml'],
+}
+
 setup(
     name='chakert',
-    version='0.2',
+    version='0.2.1',
     packages=['chakert',
               'chakert.langs'],
-    requires=[
-        'lxml',
-    ],
+    extras_require=extras_requires,
     author='Harut Dagesian',
     author_email='yes@harutune.name',
     description='Typographer for lxml and plain text. '

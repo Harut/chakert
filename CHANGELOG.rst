@@ -1,3 +1,8 @@
+0.2.1
+-----
+
+* Made lxml an optional dependency
+
 0.2
 ---
 

@@ -8,10 +8,12 @@
 *.orig
 dist
 venv
+venv-*
 build
 pip-log.txt
 coverage.xml
 nosetests.xml
+.cache
 .DS_Store
 .coverage
 .swp
