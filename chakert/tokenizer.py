@@ -1,6 +1,10 @@
 # -*- coding: utf-8 -*-
 import re
-from lxml import html
+try:
+    from lxml import html
+except ImportError:
+    html = None
+
 from .tokens import CodeToken
 from .util import LazyList, inner_html
 from ._compat import add_metaclass, string_types
@@ -199,6 +203,7 @@ class BaseTypograph(object):
 
     @classmethod
     def typograph_html(cls, markup, lang, ignored=None, block_tags=None):
+        assert html is not None, 'Install lxml to work with html'
         doc = html.fragment_fromstring(markup, create_parent=True)
         cls.typograph_tree(doc, lang, ignored=ignored, block_tags=block_tags)
         return inner_html(doc)

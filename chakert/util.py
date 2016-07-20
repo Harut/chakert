@@ -1,5 +1,8 @@
 # -*- coding: utf-8 -*-
-from lxml import html
+try:
+    from lxml import html
+except ImportError:
+    html = None
 
 class LazyList(object):
 
@@ -33,6 +36,7 @@ class LazyList(object):
 
 
 def inner_html(tag):
+    assert html is not None, 'Install lxml to work with html'
     # XXX encode/decode everywhere is really HELL
     txt = (tag.text or u'')
     txt2 = b''.join([html.tostring(x, encoding='utf-8')
