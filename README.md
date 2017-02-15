@@ -117,5 +117,5 @@ jinja2.Environment(
 )
 ```
 
-Note: decide by yourself whether it is better to correct typography when you save a text
-or when you render it to client.
+Note: it's your choice whether to correct typography when you save a text
+or when you render it to a template. In most cases, first option would be preferrable.
