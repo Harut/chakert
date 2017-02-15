@@ -100,3 +100,22 @@ General policy for rules included by default is that they should be appliable on
 and they should not be complicated.
 
 
+## Jinja integration
+
+For [jinja](http://jinja.pocoo.org/) template tag and filter example, see [jinja2_chakert.py](jinja2_chakert.py).
+
+You can enable them by adding following parameters to jinja2 `Environment`:
+
+
+``` python
+jinja2.Environment(
+    ... 
+    extensions=[
+        'jinja2_chakert.TypographExtension',
+    ],  
+    filters={'typograph': jinja2_chakert.do_typograph}
+)
+```
+
+Note: decide by yourself whether it is better to correct typography when you save a text
+or when you render it to client.
