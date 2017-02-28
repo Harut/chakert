@@ -166,7 +166,6 @@ class BaseTypograph(object):
         if tree.text:
             typograph.new_node(tree.text, tree, apply_to="text")
         for child in tree.iterchildren():
-            lstrip = True
             tag = (child.tag.lower()
                     if isinstance(child.tag, string_types)
                     else None)
@@ -189,7 +188,7 @@ class BaseTypograph(object):
                                     ignored=ignored,
                                     block_tags=block_tags)
             if child.tail:
-                typograph.new_node(child.tail, child, apply_to='tail', lstrip=lstrip)
+                typograph.new_node(child.tail, child, apply_to='tail')
         return typograph
 
     @classmethod
